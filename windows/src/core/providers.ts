@@ -7,7 +7,7 @@ import { N_ } from "../i18n/i18n";
 
 export type ProviderId =
   | "anthropic" | "openai" | "google" | "openrouter"
-  | "ollama" | "lmstudio" | "custom";
+  | "ollama" | "lmstudio" | "custom" | "claude-cli";
 
 export interface ProviderDef {
   id: ProviderId;
@@ -31,6 +31,8 @@ export const PROVIDERS: readonly ProviderDef[] = [
   { id: "ollama", name: "Ollama", accent: "#FACC15", key: null, urlField: "ollamaUrl", defaultModel: "", prefer: null },
   { id: "lmstudio", name: "LM Studio", accent: "#A3E635", key: null, urlField: "lmstudioUrl", defaultModel: "", prefer: null },
   { id: "custom", name: N_("Custom server"), accent: "#C0C4CC", key: null, urlField: "customUrl", defaultModel: "", prefer: null },
+  // 개인용 개조: API 키 없이, 이 PC의 Claude Code(구독)로 답한다 — claude_cli.rs.
+  { id: "claude-cli", name: "Claude Code", accent: "#D97757", key: null, urlField: null, defaultModel: "sonnet", prefer: "sonnet" },
 ];
 
 /** Credential store entry of the custom server's optional key. */
