@@ -111,6 +111,46 @@ pub fn ingest(source: &str) -> Result<DroppedFile, String> {
     })
 }
 
+// ── 개인용 개조: 채팅창에 붙여 넣은 이미지 ─────────────────────────────────
+//
+// 페이지가 부르는 명령이라 아무 바이트나 올 수 있다: 파일 머리 바이트로 이미지인지
+// 확인하고, 크기를 제한하고, 이름은 우리가 정한다 (경로를 페이지에서 받지 않는다).
+
+const MAX_PASTE: usize = 20 * 1024 * 1024;
+
+fn image_ext(b: &[u8]) -> Option<&'static str> {
+    if b.starts_with(b"\x89PNG\r\n\x1a\n") {
+        Some("png")
+    } else if b.starts_with(&[0xFF, 0xD8, 0xFF]) {
+        Some("jpg")
+    } else if b.starts_with(b"GIF8") {
+        Some("gif")
+    } else if b.len() > 12 && &b[..4] == b"RIFF" && &b[8..12] == b"WEBP" {
+        Some("webp")
+    } else {
+        None
+    }
+}
+
+pub fn save_pasted_image(bytes: &[u8]) -> Result<DroppedFile, String> {
+    let ext = image_ext(bytes).ok_or("Only images can be pasted.")?;
+    if bytes.len() > MAX_PASTE {
+        return Err("The image is too large (20 MB at most).".into());
+    }
+    let dir = inbox_dir();
+    crate::platform::ensure_private_dir(&settings::local_dir()).map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let stamp = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
+    let dest = dir.join(format!("pasted-{stamp}.{ext}"));
+    std::fs::write(&dest, bytes).map_err(|e| e.to_string())?;
+    sweep(&dir);
+    Ok(DroppedFile {
+        name: format!("Pasted image.{ext}"),
+        path: dest.to_string_lossy().to_string(),
+        size: bytes.len() as u64,
+    })
+}
+
 /// Drops anything copied here more than a week ago. `ingest` stamps every copy
 /// with the time it landed, so this really is the age of the copy and not the
 /// age of whatever the user happened to drag in.
@@ -129,6 +169,15 @@ fn sweep(dir: &Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_real_images_can_be_pasted() {
+        assert_eq!(image_ext(b"\x89PNG\r\n\x1a\nrest"), Some("png"));
+        assert_eq!(image_ext(&[0xFF, 0xD8, 0xFF, 0xE0]), Some("jpg"));
+        assert_eq!(image_ext(b"RIFF\0\0\0\0WEBPVP8 "), Some("webp"));
+        assert_eq!(image_ext(b"MZ\x90\0 an exe"), None);
+        assert!(save_pasted_image(b"#!/bin/sh").is_err());
+    }
 
     #[test]
     fn ingest_copies_and_never_overwrites() {

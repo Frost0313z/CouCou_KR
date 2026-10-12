@@ -236,6 +236,8 @@ export function buildPrompt(onHeightChange: () => void): ViewHost {
 
   let sending = false;
   let renderedCount = -1;
+  // 이미 질문과 함께 보낸 파일: 첨부 파일은 한 번만 보낸다. 붙여 넣은 이미지는 대화 중간에도 붙는다.
+  let sentFile: string | null = null;
   // A local model answers token by token: where its text so far is shown.
   let live: HTMLElement | null = null;
 
@@ -280,10 +282,11 @@ export function buildPrompt(onHeightChange: () => void): ViewHost {
 
     const file = State.droppedFile;
     const context: ChatContext | null =
-      State.chatHistory.length === 1 && file ? { kind: "file", name: file.name, path: file.path } : null;
+      file && file.path !== sentFile ? { kind: "file", name: file.name, path: file.path } : null;
 
     try {
       const reply = await Bridge.chatSend(query, context);
+      if (context) sentFile = file!.path;
       State.chatHistory.push({ id: nextId++, role: "assistant", content: reply.text });
       State.stateOverride = null;
       Sound.play("finish");
@@ -304,6 +307,29 @@ export function buildPrompt(onHeightChange: () => void): ViewHost {
   }
 
   send.addEventListener("click", () => void submit());
+  // 개인용 개조: Ctrl+V 로 붙여 넣은 이미지는 끌어다 놓은 파일처럼 첨부한다. 글자는 평소대로 붙는다.
+  input.addEventListener("paste", (e) => {
+    const item = [...((e as ClipboardEvent).clipboardData?.items ?? [])].find(
+      (i) => i.kind === "file" && i.type.startsWith("image/"),
+    );
+    const blob = item?.getAsFile();
+    if (!blob) return;
+    e.preventDefault();
+    void blob
+      .arrayBuffer()
+      .then((buf) => Bridge.pasteImage(Array.from(new Uint8Array(buf))))
+      .then((pasted) => {
+        State.droppedFile = { name: pasted.name, path: pasted.path };
+        Sound.play("approve");
+        State.notify();
+      })
+      .catch((err) => {
+        State.noteMessage = String(err).replace(/^Error:\s*/, "");
+        State.view = "note";
+        Sound.play("error");
+        State.notify();
+      });
+  });
   input.addEventListener("keydown", (e) => {
     const key = (e as KeyboardEvent).key;
     if (key === "Enter") {

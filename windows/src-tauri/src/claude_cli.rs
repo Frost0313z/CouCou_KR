@@ -110,9 +110,10 @@ fn office_text(path: &std::path::Path) -> Option<String> {
     (!text.is_empty()).then_some(text)
 }
 
-/// 이번 질문: 파일은 첫 질문에만 붙는다 (다른 제공자와 같음).
+/// 이번 질문. 파일은 화면(chat.ts)이 아직 안 보낸 것만 보내므로 대화 중간에도 붙인다
+/// (붙여 넣은 이미지). 창 맥락은 다른 제공자처럼 첫 질문에만.
 fn question_text(first: bool, context: Option<&ChatContext>, query: &str) -> String {
-    let Some(ChatContext::File { name, path }) = context.filter(|_| first) else {
+    let Some(ChatContext::File { name, path }) = context else {
         return crate::local_chat::user_text(first, context, query);
     };
     let path = std::path::Path::new(path);
@@ -265,7 +266,8 @@ mod tests {
         let q = question_text(true, Some(&file), "summarise");
         assert!(q.contains("\"cv (2).pdf\""), "{q}");
         assert!(q.contains("Read tool"));
-        assert_eq!(question_text(false, Some(&file), "again"), "again");
+        // 대화 중간에 붙여 넣은 이미지도 붙는다.
+        assert!(question_text(false, Some(&file), "again").contains("Read tool"));
     }
 
     #[test]

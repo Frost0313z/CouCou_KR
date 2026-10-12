@@ -497,6 +497,12 @@ fn chat_reset(chat: State<Chat>) {
     chat.reset();
 }
 
+/// 개인용 개조: 채팅창에 붙여 넣은 이미지를 보관함에 저장한다.
+#[tauri::command]
+fn paste_image(bytes: Vec<u8>) -> Result<DroppedFile, String> {
+    files::save_pasted_image(&bytes)
+}
+
 /// Copies a dropped file into the inbox and reports its name back.
 #[tauri::command]
 fn ingest_file(path: String) -> Result<DroppedFile, String> {
@@ -716,6 +722,7 @@ pub fn run() {
             local_set_key,
             chat_reset,
             ingest_file,
+            paste_image,
             secret_present,
             secret_set,
             secret_clear,
