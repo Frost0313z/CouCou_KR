@@ -133,9 +133,9 @@ fn image_ext(b: &[u8]) -> Option<&'static str> {
 }
 
 pub fn save_pasted_image(bytes: &[u8]) -> Result<DroppedFile, String> {
-    let ext = image_ext(bytes).ok_or("Only images can be pasted.")?;
+    let ext = image_ext(bytes).ok_or("이미지만 붙여 넣을 수 있어요.")?;
     if bytes.len() > MAX_PASTE {
-        return Err("The image is too large (20 MB at most).".into());
+        return Err("이미지가 너무 커요 (최대 20MB).".into());
     }
     let dir = inbox_dir();
     crate::platform::ensure_private_dir(&settings::local_dir()).map_err(|e| e.to_string())?;
@@ -145,7 +145,7 @@ pub fn save_pasted_image(bytes: &[u8]) -> Result<DroppedFile, String> {
     std::fs::write(&dest, bytes).map_err(|e| e.to_string())?;
     sweep(&dir);
     Ok(DroppedFile {
-        name: format!("Pasted image.{ext}"),
+        name: format!("붙여 넣은 이미지.{ext}"),
         path: dest.to_string_lossy().to_string(),
         size: bytes.len() as u64,
     })

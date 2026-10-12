@@ -149,7 +149,7 @@ fn parse_line(line: &str) -> Line {
         Some("result") => {
             let text = v["result"].as_str().unwrap_or("").to_string();
             if v["is_error"].as_bool() == Some(true) || v["subtype"].as_str().is_some_and(|s| s != "success") {
-                Line::Failed(if text.is_empty() { "Claude Code returned an error.".into() } else { text })
+                Line::Failed(if text.is_empty() { "Claude Code가 오류를 돌려줬어요.".into() } else { text })
             } else {
                 Line::Done(text)
             }
@@ -165,7 +165,7 @@ pub async fn send(
     query: String,
     context: Option<ChatContext>,
 ) -> Result<ChatReply, String> {
-    let exe = find_claude().ok_or("Claude Code not found. Install it and sign in with `claude` first.")?;
+    let exe = find_claude().ok_or("Claude Code를 찾을 수 없어요. 먼저 설치하고 `claude`로 로그인하세요.")?;
     let turn = chat.begin(ID);
     let question = question_text(turn.first, context.as_ref(), &query);
     let inbox = crate::files::inbox_dir();
@@ -187,14 +187,14 @@ pub async fn send(
     let mut child = tokio::process::Command::from(std_cmd)
         .kill_on_drop(true)
         .spawn()
-        .map_err(|e| format!("Could not start Claude Code: {e}"))?;
+        .map_err(|e| format!("Claude Code를 시작하지 못했어요: {e}"))?;
 
-    let mut stdin = child.stdin.take().ok_or("Claude Code has no input.")?;
+    let mut stdin = child.stdin.take().ok_or("Claude Code에 입력을 보낼 수 없어요.")?;
     stdin.write_all(prompt_text(&turn.history, &question).as_bytes()).await.map_err(|e| e.to_string())?;
     drop(stdin);
 
-    let stdout = child.stdout.take().ok_or("Claude Code has no output.")?;
-    let mut stderr = child.stderr.take().ok_or("Claude Code has no output.")?;
+    let stdout = child.stdout.take().ok_or("Claude Code의 출력을 읽을 수 없어요.")?;
+    let mut stderr = child.stderr.take().ok_or("Claude Code의 출력을 읽을 수 없어요.")?;
     let read = async {
         let mut lines = BufReader::new(stdout).lines();
         let mut shown = String::new();
@@ -217,14 +217,14 @@ pub async fn send(
         // 결과 줄 없이 끝남: 로그인 안 됨 같은 경우라 stderr 를 보여 준다.
         let mut err = String::new();
         let _ = (&mut stderr).take(4096).read_to_string(&mut err).await;
-        Err(if err.trim().is_empty() { "Claude Code stopped without an answer.".into() } else { err.trim().to_string() })
+        Err(if err.trim().is_empty() { "Claude Code가 답 없이 끝났어요.".into() } else { err.trim().to_string() })
     };
-    let answer = tokio::time::timeout(TIMEOUT, read).await.map_err(|_| "Claude Code took too long.".to_string())??;
+    let answer = tokio::time::timeout(TIMEOUT, read).await.map_err(|_| "Claude Code의 답이 너무 오래 걸려요.".to_string())??;
     let _ = child.wait().await;
 
     let answer = answer.trim().to_string();
     if answer.is_empty() {
-        return Err("No response text.".into());
+        return Err("답변 내용이 없어요.".into());
     }
     let plain = chat::plain_question(turn.first, context.as_ref(), &query);
     chat.commit(&turn, json!({ "role": "user", "content": question }), json!({ "role": "assistant", "content": answer }), &plain, &answer);

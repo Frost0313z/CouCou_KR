@@ -22,6 +22,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const WINDOWS = join(here, "..");
 const MAC = JSON.parse(readFileSync(join(WINDOWS, "src/i18n/strings.json"), "utf8"));
 const EXTRA = JSON.parse(readFileSync(join(WINDOWS, "src/i18n/extra.json"), "utf8"));
+const KO = JSON.parse(readFileSync(join(WINDOWS, "src/i18n/ko.json"), "utf8"));
 const OTHERS = LANGUAGE_CODES.filter((l) => l !== "en");
 
 /** Runs `fn` in `lang`, then puts English back for the other tests. */
@@ -117,7 +118,7 @@ test("System follows the system's language when Coucou has it, else English", ()
 });
 
 test("the picker offers the Mac's ten languages, Arabic reads right to left", () => {
-  assert.deepEqual(LANGUAGES.map((l) => l.code), ["en", "zh-Hans", "hi", "es", "ar", "fr", "bn", "pt-BR", "ru", "id"]);
+  assert.deepEqual(LANGUAGES.map((l) => l.code), ["en", "zh-Hans", "hi", "es", "ar", "fr", "bn", "pt-BR", "ru", "id", "ko"]);
   assert.equal(isRtl("ar"), true);
   assert.equal(OTHERS.some((l) => l !== "ar" && isRtl(l)), false);
 });
@@ -167,7 +168,7 @@ for (const [name, table] of [["strings.json", MAC.strings], ["extra.json", EXTRA
   test(`${name}: every string in every language, with the key's placeholders`, () => {
     for (const [key, entry] of Object.entries(table)) {
       for (const lang of OTHERS) {
-        const value = entry[lang];
+        const value = lang === "ko" ? KO.strings[key] : entry[lang];
         assert.ok(value !== undefined, `${name}: ${JSON.stringify(key)} has no ${lang}`);
         const forms = typeof value === "string" ? [value] : Object.values(value);
         for (const form of forms) {
@@ -182,6 +183,16 @@ for (const [name, table] of [["strings.json", MAC.strings], ["extra.json", EXTRA
     }
   });
 }
+
+test("ko.json only translates keys the two tables have", () => {
+  for (const key of Object.keys(KO.strings)) assert.ok(key in MAC.strings || key in EXTRA.strings, key);
+  inLanguage("ko", () => {
+    assert.equal(t("Allow"), "허용");
+    assert.equal(t("Uploading {name}", { name: "a.pdf" }), "a.pdf 올리는 중");
+    assert.equal(tn("{count} model", "{count} models", 3), "모델 3개");
+  });
+  assert.equal(resolveLanguage("", ["ko-KR"]), "ko");
+});
 
 test("extra.json never shadows a string of the Mac's", () => {
   for (const key of Object.keys(EXTRA.strings)) assert.ok(!(key in MAC.strings), key);
@@ -262,7 +273,10 @@ const NOT_TEXT = new Set([
 test("no known user-facing English literal outside t() in the views and settings", () => {
   const translated = new Set(
     [...Object.entries(MAC.strings), ...Object.entries(EXTRA.strings)]
-      .filter(([key, entry]) => OTHERS.some((l) => typeof entry[l] !== "string" || entry[l] !== key))
+      .filter(([key, entry]) => OTHERS.some((l) => {
+        const value = l === "ko" ? KO.strings[key] : entry[l];
+        return typeof value !== "string" || value !== key;
+      }))
       .map(([key]) => key),
   );
   const offenders = [];
