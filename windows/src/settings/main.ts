@@ -952,6 +952,12 @@ function generalSection(): HTMLElement {
       toggle(settings.openOnHover, (v) => { settings.openOnHover = v; void save(); }),
     ),
     h("div", { class: "hint", text: t("Hovering the island opens it; it folds again shortly after the pointer leaves. Click inside to keep it open.") }),
+    // 개인용 개조: 조용한 모드.
+    h("div", { class: "row" },
+      h("label", { text: t("Quiet island") }),
+      toggle(settings.quietIsland, (v) => { settings.quietIsland = v; void save(); }),
+    ),
+    h("div", { class: "hint", text: t("Shows the island only for permission requests and questions. While agents work it stays hidden: move the pointer to the top of the screen to look. Handy on a screen without a notch.") }),
     h("div", { class: "row" },
       h("label", { text: t("Auto-close") }),
       autoClose,

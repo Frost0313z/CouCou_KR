@@ -267,7 +267,8 @@ function handleHook(island: Island, payload: HookPayload) {
       if (isAlert) island.setView(view);
     } else if (isAlert) {
       island.alert(view);
-    } else if (State.mode === "hidden") {
+    } else if (State.mode === "hidden" && !State.settings.quietIsland) {
+      // 개인용 개조: 조용한 모드면 작업 이벤트로는 꺼내지 않는다 (알림은 위에서 그대로 연다).
       island.reveal();
     }
   };

@@ -458,6 +458,28 @@ fn show(app: &AppHandle, d: &Desktop, at: (f64, f64)) {
     let _ = app.emit_to(LABEL, "desktop-visible", true);
 }
 
+/// 개인용 개조: 일시정지(트레이로 숨기기) 동안 바탕화면 Mochi 창을 감추고, 풀리면 다시 보인다.
+/// 자리와 상태는 그대로 둔다. 바탕화면에 나가 있지 않으면 할 일이 없다.
+pub fn set_paused(app: &AppHandle, paused: bool) {
+    let Some(d) = app.try_state::<Arc<Desktop>>() else { return };
+    let (shown, pos) = {
+        let i = d.inner.lock().unwrap();
+        (i.shown, i.pos)
+    };
+    if !shown {
+        return;
+    }
+    let Some(win) = window(app) else { return };
+    if PARK {
+        // 윈도우는 창을 숨기지 않고 화면 밖으로 옮긴다 (PARK 설명: 숨겼다 다시 보이면 키보드 포커스를 뺏는다).
+        // 실제 자리(inner.pos)는 건드리지 않으니 풀릴 때 그 자리로 돌아온다.
+        let at = if paused { PARKED } else { pos };
+        let _ = win.set_position(PhysicalPosition::new(at.0.round() as i32, at.1.round() as i32));
+    } else {
+        let _ = if paused { win.hide() } else { win.show() };
+    }
+}
+
 fn hide(app: &AppHandle, d: &Desktop) {
     {
         let mut i = d.inner.lock().unwrap();

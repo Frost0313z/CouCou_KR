@@ -755,6 +755,9 @@
     "Relay address": "릴레이 주소",
     "Relay access key": "릴레이 접근 키",
     "Paste the access key you set when you deployed the relay. It is kept in the system keystore and never shown again.": "릴레이를 배포할 때 정한 접근 키를 붙여 넣으세요. 시스템 키 저장소에 보관되며 다시 표시되지 않아요.",
-    "This code also carries the access key and the end-to-end key for the relay {host}. Pair again makes a new key and a new room.": "이 코드에는 릴레이 {host}의 접근 키와 종단 간 암호화 키도 들어 있어요. 다시 페어링하면 새 키와 새 방을 만들어요."
+    "This code also carries the access key and the end-to-end key for the relay {host}. Pair again makes a new key and a new room.": "이 코드에는 릴레이 {host}의 접근 키와 종단 간 암호화 키도 들어 있어요. 다시 페어링하면 새 키와 새 방을 만들어요.",
+    "Quiet island": "조용한 모드",
+    "Shows the island only for permission requests and questions. While agents work it stays hidden: move the pointer to the top of the screen to look. Handy on a screen without a notch.": "권한 요청과 질문이 올 때만 아일랜드를 띄워요. 에이전트가 일하는 동안에는 숨어 있으니, 보고 싶으면 포인터를 화면 맨 위로 가져가세요. 노치가 없는 화면에 좋아요.",
+    "Hide Mochi in the tray": "Mochi 트레이로 숨기기"
   }
 }

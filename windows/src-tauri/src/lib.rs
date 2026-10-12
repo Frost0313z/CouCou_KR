@@ -311,8 +311,10 @@ fn quit_app(app: AppHandle) {
 /// Tray → Pause. Paused means paused: the pollers stop talking to the network,
 /// not just the island stopping showing things.
 #[tauri::command]
-fn set_paused(paused: bool) {
+fn set_paused(app: AppHandle, paused: bool) {
     integrations::set_paused(paused);
+    // 개인용 개조: 일시정지 동안은 바탕화면 Mochi 도 감춘다 (트레이로 숨기기).
+    desktop::set_paused(&app, paused);
 }
 
 // ── Claude Code hooks ─────────────────────────────────────────────────────────

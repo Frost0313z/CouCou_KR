@@ -132,8 +132,8 @@ export function runGlobalShortcut(host: ShortcutHost, action: string, resume: ()
       host.flyOutOrHome();
       break;
 
-    // wardrobeToggle never comes this way (Rust sends `open-wardrobe`), and
-    // attachFrontWindow isn't in this version.
+    // wardrobeToggle never comes this way (Rust sends `open-wardrobe`), nor does
+    // pauseToggle (Rust sends the tray's `pause`), and attachFrontWindow isn't in this version.
     default:
       break;
   }
