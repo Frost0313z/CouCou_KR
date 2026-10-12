@@ -1,8 +1,44 @@
+![CouCou_KR 아이콘](windows/src-tauri/icons/128x128.png)
+
 # CouCou_KR
 
-**[Coucou](https://github.com/Louis-CFM/coucou) 윈도우판을 한국어 사용자에 맞게 고친 개인용 포크입니다.**
+**화면 맨 위에 사는 작은 친구 Mochi 가 AI 코딩 에이전트를 지켜봐 주는 [Coucou](https://github.com/Louis-CFM/coucou) 윈도우판 — 한국어 개인용 포크.**
 
-화면 맨 위에 사는 작은 캐릭터 Mochi가 Claude Code 같은 AI 코딩 에이전트의 작업을 실시간으로 보여 주고, 권한 승인·질문 답변·채팅·파일 전달을 그 자리에서 할 수 있게 해 줍니다.
+Claude Code 권한 승인, 작업 지켜보기, 파일 끌어다 놓기, Claude 와 채팅 — 하던 일을 멈추지 않고 화면 위에서 바로 합니다.
+여기에 **한국어 화면**, **API 키 없는 Claude 구독 채팅**, **PDF·한글(HWPX) 문서 읽기**, **이미지 붙여넣기**를 더했습니다.
+
+![Windows 10/11](https://img.shields.io/badge/Windows-10%2F11-0078D4?logo=windows&logoColor=white)
+![Tauri 2](https://img.shields.io/badge/Tauri-2-FFC131?logo=tauri&logoColor=black)
+![Rust](https://img.shields.io/badge/Rust-backend-000000?logo=rust&logoColor=white)
+![TypeScript 5](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite 6](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Claude Code 구독 채팅](https://img.shields.io/badge/Claude%20Code-%EA%B5%AC%EB%8F%85%20%EC%B1%84%ED%8C%85-D97757?logo=anthropic&logoColor=white)
+![UI 한국어](https://img.shields.io/badge/UI-%ED%95%9C%EA%B5%AD%EC%96%B4-E4002B)
+![version 0.4.0-kr](https://img.shields.io/badge/version-0.4.0--kr-0A84FF)
+![Code: MIT](https://img.shields.io/badge/code-MIT-green)
+![GitHub stars](https://img.shields.io/github/stars/Frost0313z/CouCou_KR?style=social)
+
+![앱을 켜면 손을 흔드는 Mochi](windows/screenshots/greeting.png)
+
+| 권한 승인 | Claude 와 채팅 |
+|---|---|
+| ![Claude Code 권한 요청과 거부·허용 버튼](windows/screenshots/approval.png) | ![아일랜드에서 Claude 와 채팅](windows/screenshots/chat.png) |
+| **한눈에 보기** | **파일 끌어다 놓기** |
+| ![왼쪽은 선택한 연동, 오른쪽은 나머지 필](windows/screenshots/overview.png) | ![파일을 기다리며 상자로 변한 Mochi](windows/screenshots/drop.png) |
+
+스크린샷은 원작 윈도우판 화면입니다 (영어 화면).
+
+## 기술 스택
+
+| 영역 | 사용한 것 |
+|---|---|
+| 데스크톱 앱 | [Tauri 2](https://tauri.app) — 윈도우 기본 WebView2 위에서 동작, 설치 파일 없이 exe 하나로 실행 |
+| 본체 | Rust — tokio(비동기), reqwest(네트워크), serde(JSON), windows 크레이트(윈도우 API) |
+| 화면 | TypeScript (프레임워크 없음) + Vite, Mochi 는 이미지 없이 Canvas 2D 코드로 그림 |
+| 에이전트 연결 | `coucou-hook.exe` (Rust) — Claude Code 훅을 이름 있는 파이프(Named Pipe)로 앱에 전달 |
+| AI 채팅 | **Claude Code CLI (구독)**, Anthropic · OpenAI · Google AI · OpenRouter API, Ollama · LM Studio |
+| 비밀 보관 | 윈도우 자격 증명 관리자 — 키·토큰은 파일로 남기지 않음 |
+| 테스트 | `node:test` (화면 398개), `cargo test` (본체 417개) — 2026-10-12 기준 |
 
 > **비공식 포크입니다.** 원작자 Louis Raillé 와 관계가 없고, 원작자가 만들거나 보증한 것이 아닙니다.
 > 직접 빌드해서 쓰는 개인용이며, 설치 파일을 배포하지 않습니다.
