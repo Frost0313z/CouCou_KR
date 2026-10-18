@@ -12,10 +12,12 @@ use serde_json::{Map, Value};
 use std::collections::HashMap;
 use std::sync::{OnceLock, RwLock};
 
-pub const LANGUAGES: [&str; 10] = ["en", "zh-Hans", "hi", "es", "ar", "fr", "bn", "pt-BR", "ru", "id"];
+pub const LANGUAGES: [&str; 11] = ["en", "zh-Hans", "hi", "es", "ar", "fr", "bn", "pt-BR", "ru", "id", "ko"];
 
 static MAC: &str = include_str!("../../src/i18n/strings.json");
 static EXTRA: &str = include_str!("../../src/i18n/extra.json");
+// 개인용 개조: 한국어 (영어 문장 → 한국어). i18n.ts 와 같은 파일.
+static KO: &str = include_str!("../../src/i18n/ko.json");
 
 type Table = HashMap<String, Map<String, Value>>;
 
@@ -30,6 +32,13 @@ fn table() -> &'static Table {
             for (key, entry) in strings {
                 if let Value::Object(langs) = entry {
                     out.insert(key.clone(), langs.clone());
+                }
+            }
+        }
+        if let Ok(Value::Object(root)) = serde_json::from_str::<Value>(KO) {
+            if let Some(Value::Object(strings)) = root.get("strings") {
+                for (key, ko) in strings {
+                    out.entry(key.clone()).or_default().insert("ko".into(), ko.clone());
                 }
             }
         }
@@ -151,7 +160,7 @@ fn lookup_in(lang: &str, key: &str) -> Option<&'static Value> {
 /// CLDR plural category of `n` (whole numbers) in `lang`.
 fn plural_category(lang: &str, n: u64) -> &'static str {
     match lang {
-        "zh-Hans" | "id" => "other",
+        "zh-Hans" | "id" | "ko" => "other",
         "fr" | "pt-BR" | "hi" | "bn" => {
             if n <= 1 { "one" } else { "other" }
         }
@@ -282,9 +291,11 @@ mod tests {
         let Value::Object(root) = serde_json::from_str::<Value>(EXTRA).unwrap() else { panic!() };
         let Some(Value::Object(strings)) = root.get("strings") else { panic!("no strings") };
         for (key, entry) in strings {
-            for lang in LANGUAGES.iter().filter(|l| **l != "en") {
+            // 한국어는 ko.json 에서 오므로 합친 표에서 확인한다.
+            for lang in LANGUAGES.iter().filter(|l| **l != "en" && **l != "ko") {
                 assert!(entry.get(*lang).is_some(), "{key:?} has no {lang}");
             }
+            assert!(table().get(key).and_then(|e| e.get("ko")).is_some(), "{key:?} has no ko");
         }
     }
 }

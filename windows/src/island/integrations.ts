@@ -114,7 +114,7 @@ function handle(island: Island, update: IntegrationUpdate) {
       Sound.play(event.success ? "finish" : "error");
       // Same as the Swift pollers: show the compact island so the badge is seen,
       // but never steal the screen for a successful deploy.
-      island.reveal();
+      if (!State.settings.quietIsland) island.reveal(); // 개인용 개조: 조용한 모드
 
       const existing = clearTimers.get(update.id);
       if (existing != null) window.clearTimeout(existing);

@@ -3899,6 +3899,39 @@
    "pt-BR": "Este código também inclui a chave de acesso e a chave de ponta a ponta do relay {host}. «Parear de novo» cria uma chave e uma sala novas.",
    "ru": "Этот код также содержит ключ доступа и сквозной ключ для ретранслятора {host}. «Сопрячь заново» создаёт новый ключ и новую комнату.",
    "id": "Kode ini juga memuat kunci akses dan kunci ujung ke ujung untuk relay {host}. «Sandingkan ulang» membuat kunci dan ruang baru."
+  },
+  "Quiet island": {
+   "zh-Hans": "安静模式",
+   "hi": "शांत मोड",
+   "es": "Isla silenciosa",
+   "ar": "الوضع الهادئ",
+   "fr": "Île discrète",
+   "bn": "নীরব মোড",
+   "pt-BR": "Ilha silenciosa",
+   "ru": "Тихий режим",
+   "id": "Mode senyap"
+  },
+  "Shows the island only for permission requests and questions. While agents work it stays hidden: move the pointer to the top of the screen to look. Handy on a screen without a notch.": {
+   "zh-Hans": "只在权限请求和提问时显示岛。代理工作时保持隐藏：把指针移到屏幕顶部即可查看。适合没有刘海的屏幕。",
+   "hi": "आइलैंड केवल अनुमति अनुरोधों और प्रश्नों के लिए दिखता है। एजेंट काम करते समय यह छिपा रहता है: देखने के लिए पॉइंटर को स्क्रीन के ऊपर ले जाएँ। बिना नॉच वाली स्क्रीन के लिए उपयोगी।",
+   "es": "Muestra la isla solo para solicitudes de permiso y preguntas. Mientras los agentes trabajan sigue oculta: lleva el puntero a la parte superior de la pantalla para verla. Útil en pantallas sin notch.",
+   "ar": "يُظهر الجزيرة فقط لطلبات الأذونات والأسئلة. تبقى مخفية أثناء عمل الوكلاء: حرّك المؤشر إلى أعلى الشاشة لرؤيتها. مفيد للشاشات بلا نتوء.",
+   "fr": "N’affiche l’île que pour les demandes d’autorisation et les questions. Pendant que les agents travaillent, elle reste cachée : amène le pointeur en haut de l’écran pour la voir. Pratique sur un écran sans encoche.",
+   "bn": "আইল্যান্ড শুধু অনুমতির অনুরোধ ও প্রশ্নের জন্য দেখায়। এজেন্ট কাজ করার সময় লুকানো থাকে: দেখতে পয়েন্টার স্ক্রিনের উপরে নিন। নচ ছাড়া স্ক্রিনে সুবিধাজনক।",
+   "pt-BR": "Mostra a ilha só para pedidos de permissão e perguntas. Enquanto os agentes trabalham, ela fica escondida: leve o ponteiro ao topo da tela para ver. Útil em telas sem notch.",
+   "ru": "Показывает остров только для запросов разрешений и вопросов. Пока агенты работают, он скрыт: наведите указатель на верх экрана, чтобы посмотреть. Удобно на экране без выреза.",
+   "id": "Menampilkan pulau hanya untuk permintaan izin dan pertanyaan. Saat agen bekerja, pulau tetap tersembunyi: arahkan penunjuk ke atas layar untuk melihat. Berguna di layar tanpa notch."
+  },
+  "Hide Mochi in the tray": {
+   "zh-Hans": "将 Mochi 隐藏到托盘",
+   "hi": "Mochi को ट्रे में छिपाएँ",
+   "es": "Ocultar a Mochi en la bandeja",
+   "ar": "إخفاء Mochi في الدرج",
+   "fr": "Cacher Mochi dans la zone de notification",
+   "bn": "Mochi কে ট্রেতে লুকান",
+   "pt-BR": "Esconder o Mochi na bandeja",
+   "ru": "Спрятать Mochi в трей",
+   "id": "Sembunyikan Mochi di baki"
   }
  }
 }

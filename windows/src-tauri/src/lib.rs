@@ -4,6 +4,7 @@ mod agent_hooks;
 mod agents;
 mod chat;
 mod claude;
+mod claude_cli;
 mod codex_plan;
 mod config_file;
 mod desktop;
@@ -310,8 +311,10 @@ fn quit_app(app: AppHandle) {
 /// Tray → Pause. Paused means paused: the pollers stop talking to the network,
 /// not just the island stopping showing things.
 #[tauri::command]
-fn set_paused(paused: bool) {
+fn set_paused(app: AppHandle, paused: bool) {
     integrations::set_paused(paused);
+    // 개인용 개조: 일시정지 동안은 바탕화면 Mochi 도 감춘다 (트레이로 숨기기).
+    desktop::set_paused(&app, paused);
 }
 
 // ── Claude Code hooks ─────────────────────────────────────────────────────────
@@ -494,6 +497,12 @@ fn local_set_key(url: String, key: String) -> Result<(), String> {
 #[tauri::command]
 fn chat_reset(chat: State<Chat>) {
     chat.reset();
+}
+
+/// 개인용 개조: 채팅창에 붙여 넣은 이미지를 보관함에 저장한다.
+#[tauri::command]
+fn paste_image(bytes: Vec<u8>) -> Result<DroppedFile, String> {
+    files::save_pasted_image(&bytes)
 }
 
 /// Copies a dropped file into the inbox and reports its name back.
@@ -715,6 +724,7 @@ pub fn run() {
             local_set_key,
             chat_reset,
             ingest_file,
+            paste_image,
             secret_present,
             secret_set,
             secret_clear,

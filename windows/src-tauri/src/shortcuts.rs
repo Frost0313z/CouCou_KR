@@ -69,6 +69,8 @@ pub const ACTIONS: &[ActionDef] = &[
     action("muteToggle", "Ctrl+Alt+S", true, true),
     action("desktopToggle", "Ctrl+Alt+D", true, true),
     action("wardrobeToggle", "Ctrl+Alt+G", true, true),
+    // 개인용 개조: 트레이 → 일시정지와 같다. 아일랜드도 바탕화면 Mochi 도 감추고, 다시 누르면 돌아온다.
+    action("pauseToggle", "Ctrl+Alt+H", true, true),
 ];
 
 pub fn find(id: &str) -> Option<&'static ActionDef> {
@@ -92,6 +94,7 @@ pub fn description(id: &str) -> &'static str {
         "muteToggle" => n_("Mute or unmute Mochi"),
         "desktopToggle" => n_("Send Mochi to the desktop"),
         "wardrobeToggle" => n_("Open the wardrobe"),
+        "pauseToggle" => n_("Hide Mochi in the tray"),
         _ => "Coucou",
     }
 }
@@ -324,6 +327,9 @@ pub fn dispatch<R: Runtime>(app: &AppHandle<R>, action: &str) {
     crate::log::line(format!("shortcut {action}"));
     if action == "wardrobeToggle" {
         let _ = app.emit_to(WINDOW_LABEL, "open-wardrobe", ());
+    } else if action == "pauseToggle" {
+        // 트레이의 일시정지와 똑같이 처리한다 (main.ts 의 "tray" 이벤트).
+        let _ = app.emit_to(WINDOW_LABEL, "tray", "pause".to_string());
     } else {
         let _ = app.emit_to(WINDOW_LABEL, "shortcut", action.to_string());
     }
@@ -688,9 +694,10 @@ mod wayland {
 mod tests {
     use super::*;
 
-    const MAC_IDS: [&str; 10] = [
+    const MAC_IDS: [&str; 11] = [
         "toggleIsland", "openChat", "goToAlert", "jumpToTerminal", "attachFrontWindow",
         "nextPill", "prevPill", "muteToggle", "desktopToggle", "wardrobeToggle",
+        "pauseToggle", // 개인용 개조
     ];
 
     fn never(_: &Shortcut) -> Option<String> {

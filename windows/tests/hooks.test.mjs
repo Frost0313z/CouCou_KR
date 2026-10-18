@@ -76,6 +76,16 @@ test("a session names the pill after its folder and reveals the island", () => {
   assert.deepEqual(asked, ["reveal"]);
 });
 
+// 개인용 개조: 조용한 모드 (설정은 beforeEach 가 기본값으로 되돌린다).
+test("quiet island: work events leave it hidden, a permission request still opens it", () => {
+  State.settings = { ...State.settings, quietIsland: true };
+  hook({ hook_event_name: "SessionStart", cwd: "C:\\Users\\me\\proj\\" });
+  hook({ hook_event_name: "PreToolUse", tool_name: "Read", tool_input: { file_path: "a.ts" } });
+  assert.deepEqual(asked, []);
+  hook({ hook_event_name: "PermissionRequest", request_id: "r1", tool_name: "Bash" });
+  assert.deepEqual(asked, ["alert:approval"]);
+});
+
 test("known project folders get their display name, and no folder is a Session", () => {
   hook({ hook_event_name: "SessionStart", cwd: "/home/me/notch-buddy" });
   assert.equal(task().name, "Notch Buddy");

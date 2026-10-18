@@ -343,6 +343,8 @@ export const Bridge = {
     callOrThrow<LocalServer>("local_connect", { provider, url }),
   /** Copies a dropped file into the inbox. */
   ingestFile: (path: string) => callOrThrow<DroppedFile>("ingest_file", { path }),
+  /** 개인용 개조: 채팅창에 붙여 넣은 이미지를 보관함에 저장한다 (Rust 가 이미지인지 확인). */
+  pasteImage: (bytes: number[]) => callOrThrow<DroppedFile>("paste_image", { bytes }),
   /** Only ever tells you whether a key exists — never its value. */
   secretPresent: (key: string) => call<boolean>("secret_present", { key }),
   secretSet: (key: string, value: string) => callOrThrow<void>("secret_set", { key, value }),

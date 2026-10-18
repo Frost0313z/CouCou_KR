@@ -19,6 +19,9 @@ pub struct Settings {
     /// Hovering the island opens it all the way, and it folds again shortly
     /// after the pointer leaves (the Mac's "Open on hover"). Off by default.
     pub open_on_hover: bool,
+    /// 개인용 개조 — 조용한 모드: 작업 중에는 아일랜드를 꺼내지 않고 승인·질문 때만 연다.
+    /// 노치 없는 화면에서 위쪽을 가리지 않게. 기본은 꺼짐.
+    pub quiet_island: bool,
     pub absence_interval: f64,
     pub active_integrations: Vec<String>,
     /// The always-on workspace pill (src/core/pills.ts checks it is one).
@@ -127,6 +130,7 @@ impl Default for Settings {
             sound_volume: 0.12,
             auto_close_interval: 15.0,
             open_on_hover: false,
+            quiet_island: false,
             absence_interval: 180.0,
             active_integrations: vec![
                 "integration_resend".into(),
@@ -419,6 +423,7 @@ mod tests {
   "soundVolume": 0.5,
   "autoCloseInterval": 30.0,
   "openOnHover": true,
+  "quietIsland": true,
   "absenceInterval": 60.0,
   "activeIntegrations": ["integration_notion"],
   "mainPill": "agent_cursor",
@@ -926,6 +931,7 @@ mod tests {
                 "soundVolume",
                 "autoCloseInterval",
                 "openOnHover",
+                "quietIsland",
                 "absenceInterval",
                 "activeIntegrations",
                 "mainPill",

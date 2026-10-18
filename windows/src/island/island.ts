@@ -42,6 +42,8 @@ const UPLOAD_VIEWS: ReadonlySet<IslandViewName> = new Set(["upload", "uploading"
 const PRE_PROGRESS = USC.T_PROG_START - USC.T_DROP;
 
 const modeOrder = (m: IslandMode) => (m === "hidden" ? 0 : m === "compact" ? 1 : 2);
+/** 작은 아일랜드가 숨기까지(초). 조용한 모드는 포인터가 떠나면 곧 숨는다 (개인용 개조). */
+const petitHideDelay = () => (State.settings.quietIsland ? 3 : 60);
 
 export class Island {
   readonly fsm = new IslandStateMachine();
@@ -310,6 +312,7 @@ export class Island {
   private wireFsm() {
     this.fsm.homeToPetitDelay = State.settings.autoCloseInterval;
     this.fsm.openOnHover = State.settings.openOnHover;
+    this.fsm.petitToHiddenDelay = petitHideDelay();
     this.fsm.onTransition = (from, to) => {
       // The greeting is over, however it ended: back to his desktop spot.
       if (from === "coucou" && to !== "coucou") this.desktop.launch();
@@ -435,6 +438,7 @@ export class Island {
 
   /** Music started playing: the compact island, without the peek sound (musicReveal). */
   revealSilently() {
+    if (State.settings.quietIsland) return;
     this.silentReveal = true;
     this.fsm.reveal();
     this.silentReveal = false;
@@ -1198,6 +1202,7 @@ export class Island {
     Sound.setVolume(State.settings.soundVolume);
     this.fsm.homeToPetitDelay = State.settings.autoCloseInterval;
     this.fsm.openOnHover = State.settings.openOnHover;
+    this.fsm.petitToHiddenDelay = petitHideDelay();
     State.notify();
   }
 
