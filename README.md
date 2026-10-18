@@ -5,7 +5,7 @@
 **화면 맨 위에 사는 작은 친구 Mochi 가 AI 코딩 에이전트를 지켜봐 주는 [Coucou](https://github.com/Louis-CFM/coucou) 윈도우판 — 한국어 개인용 포크.**
 
 Claude Code 권한 승인, 작업 지켜보기, 파일 끌어다 놓기, Claude 와 채팅 — 하던 일을 멈추지 않고 화면 위에서 바로 합니다.
-여기에 **한국어 화면**, **API 키 없는 Claude 구독 채팅**, **PDF·한글(HWPX) 문서 읽기**, **이미지 붙여넣기**를 더했습니다.
+여기에 **한국어 화면**, **API 키 없는 Claude 구독 채팅**, **PDF·한글(HWPX) 문서 읽기**, **이미지 붙여넣기**, 그리고 노치 없는 노트북을 위한 **조용한 모드**와 **트레이로 숨기기**를 더했습니다.
 
 ![Windows 10/11](https://img.shields.io/badge/Windows-10%2F11-0078D4?logo=windows&logoColor=white)
 ![Tauri 2](https://img.shields.io/badge/Tauri-2-FFC131?logo=tauri&logoColor=black)
@@ -38,7 +38,7 @@ Claude Code 권한 승인, 작업 지켜보기, 파일 끌어다 놓기, Claude 
 | 에이전트 연결 | `coucou-hook.exe` (Rust) — Claude Code 훅을 이름 있는 파이프(Named Pipe)로 앱에 전달 |
 | AI 채팅 | **Claude Code CLI (구독)**, Anthropic · OpenAI · Google AI · OpenRouter API, Ollama · LM Studio |
 | 비밀 보관 | 윈도우 자격 증명 관리자 — 키·토큰은 파일로 남기지 않음 |
-| 테스트 | `node:test` (화면 398개), `cargo test` (본체 417개) — 2026-10-12 기준 |
+| 테스트 | `node:test` (화면 399개), `cargo test` (본체 417개) — 2026-10-18 기준 |
 
 > **비공식 포크입니다.** 원작자 Louis Raillé 와 관계가 없고, 원작자가 만들거나 보증한 것이 아닙니다.
 > 직접 빌드해서 쓰는 개인용이며, 설치 파일을 배포하지 않습니다.
@@ -54,13 +54,15 @@ Claude Code 권한 승인, 작업 지켜보기, 파일 끌어다 놓기, Claude 
 | Claude 구독으로 채팅 | API 키 없이, 이 PC에 로그인된 **Claude Code**(Pro·Max 구독)로 아일랜드 채팅에 답합니다. 채팅창 위 모델 버튼 → **Claude Code** 칩을 고르면 됩니다. |
 | 파일 읽기 | 아일랜드에 끌어다 놓은 **PDF·이미지·텍스트**는 Claude Code 가 직접 읽고, **HWPX·DOCX·PPTX** 는 본문 글자를 꺼내 함께 보냅니다. |
 | 이미지 붙여넣기 | 채팅 입력창에서 `Ctrl+V` 로 캡처나 복사한 이미지를 붙여 넣으면 첨부됩니다. 대화 중간에도 됩니다. |
+| 조용한 모드 | 노치 없는 화면에서 아일랜드가 위쪽을 가리지 않게 합니다. 에이전트가 일하는 동안에는 아일랜드를 꺼내지 않고, **권한 요청·질문이 올 때만** 엽니다. 포인터가 떠나면 3초 뒤에 숨습니다(원래 60초). 설정 → 일반 → **조용한 모드** 에서 켭니다. |
+| 트레이로 숨기기 | **`Ctrl+Alt+H`** 를 누르면 아일랜드와 바탕화면 Mochi 가 모두 사라지고, 다시 누르면 제자리로 돌아옵니다. 트레이 → 일시정지와 같은 동작이라, 숨긴 동안 권한 요청은 Claude Code 가 터미널에서 직접 묻습니다. 키는 설정 → 단축키에서 바꿀 수 있습니다. |
 | 한국어 문서 | 윈도우판 설명서를 한국어로 옮겼습니다: [windows/README.ko.md](windows/README.ko.md) |
 
 맥·아이폰·안드로이드 쪽은 원작 그대로이며, 고친 것은 **윈도우판(`windows/`)** 뿐입니다.
 
 ## 설치 (직접 빌드)
 
-모든 변경은 **`personal/claude-cli-chat`** 브랜치에 있습니다. `main` 은 원작 그대로입니다.
+모든 변경은 **`main`** 에 있습니다. 원작 그대로의 코드는 [원작 저장소](https://github.com/Louis-CFM/coucou)에서 볼 수 있습니다.
 
 ### 필요한 것
 
@@ -73,9 +75,7 @@ Claude Code 권한 승인, 작업 지켜보기, 파일 끌어다 놓기, Claude 
 
 ```powershell
 git clone https://github.com/Frost0313z/CouCou_KR.git
-cd CouCou_KR
-git switch personal/claude-cli-chat
-cd windows
+cd CouCou_KR/windows
 npm install
 npm run tauri dev               # 고치면 바로 반영되는 개발용 실행
 npx tauri build --no-bundle     # 실행 파일 만들기 → windows\target\release\coucou.exe
@@ -93,6 +93,7 @@ npx tauri build --no-bundle     # 실행 파일 만들기 → windows\target\rel
 2. **사용 중인 필** — 주 도구(VS Code 등)를 고르고, 쓰지 않는 필은 뺍니다.
 3. **연동 → GitHub** — 내 PR·리뷰 요청·CI 상태를 보려면 토큰을 넣습니다. 읽기 전용(fine-grained) 토큰을 권합니다. 토큰은 윈도우 자격 증명 관리자에만 저장됩니다.
 4. **단축키** — 다른 앱과 겹치는 단축키는 *사용 중* 으로 표시되니 다른 키로 바꿉니다.
+5. **노치 없는 노트북이라면** — **일반 → 조용한 모드** 를 켜고, `Ctrl+Alt+D` 로 Mochi 를 바탕화면(기본 위치는 오른쪽 아래, 작업 표시줄 위)에 내보내세요. 화면 위쪽은 평소에 비어 있고, 작업 상태는 Mochi 로 보고, 승인·질문이 오면 Mochi 가 아일랜드로 날아가 열어 줍니다. 잠깐 다 치우고 싶으면 `Ctrl+Alt+H`.
 
 ## Claude 구독 채팅은 이렇게 동작합니다
 
@@ -120,9 +121,9 @@ npx tauri build --no-bundle     # 실행 파일 만들기 → windows\target\rel
 
 | 브랜치 | 내용 |
 |---|---|
-| `personal/claude-cli-chat` | 위의 모든 변경 (이 브랜치로 빌드하세요) |
-| `docs/windows-readme-ko` | 윈도우판 설명서 한국어 번역만 (위 브랜치에 이미 포함) |
-| `main` | 원작 그대로 |
+| `main` | 위의 모든 변경 (이 브랜치로 빌드하세요) |
+| `personal/claude-cli-chat` | 변경을 만들던 작업 브랜치 (`main` 에 합쳐짐) |
+| `docs/windows-readme-ko` | 윈도우판 설명서 한국어 번역만 (`main` 에 합쳐짐) |
 
 ## 라이선스
 
